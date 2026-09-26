@@ -94,11 +94,11 @@
                 <button class="mobile-menu-close" id="closeFolder" aria-label="Tutup">&times;</button>
             </div>
             <ul class="mobile-folder-list" id="mobileFolderList">
-                <li class="active"><i class="fa-solid fa-list"></i> Semua Link</li>
-                <li><i class="fa-solid fa-folder"></i> Pekerjaan</li>
-                <li><i class="fa-solid fa-folder"></i> Referensi &amp; Belajar</li>
-                <li><i class="fa-solid fa-folder"></i> Hiburan</li>
-                <li><i class="fa-solid fa-folder"></i> Media Sosial</li>
+                <li class="active" data-url="https://example.com"><i class="fa-solid fa-list"></i> Semua Link</li>
+                <li data-url="https://example.com1"><i class="fa-solid fa-folder"></i> Pekerjaan</li>
+                <li data-url="https://example.com2"><i class="fa-solid fa-folder"></i> Referensi &amp; Belajar</li>
+                <li data-url="https://example.com3"><i class="fa-solid fa-folder"></i> Hiburan</li>
+                <li data-url="https://example.com4"><i class="fa-solid fa-folder"></i> Media Sosial</li>
             </ul>
         </div>
     </div>
@@ -111,11 +111,11 @@
             <strong>Bookmarks WasobiTech</strong>
         </div>
         <ul class="folder-list">
-            <li class="active" id="folder-all"><i class="fa-solid fa-list"></i> Semua Link</li>
-            <li><i class="fa-solid fa-folder"></i> Pekerjaan</li>
-            <li><i class="fa-solid fa-folder"></i> Referensi & Belajar</li>
-            <li><i class="fa-solid fa-folder"></i> Hiburan</li>
-			<li><i class="fa-solid fa-folder"></i> Media Sosial</li>
+            <li class="active" id="folder-all" data-url="https://example.com"><i class="fa-solid fa-list"></i> Semua Link</li>
+            <li data-url="https://example.com1"><i class="fa-solid fa-folder"></i> Pekerjaan</li>
+            <li data-url="https://example.com2"><i class="fa-solid fa-folder"></i> Referensi &amp; Belajar</li>
+            <li data-url="https://example.com3"><i class="fa-solid fa-folder"></i> Hiburan</li>
+			<li data-url="https://example.com4"><i class="fa-solid fa-folder"></i> Media Sosial</li>
         </ul>
     </aside>
 
@@ -252,19 +252,29 @@
         }
         searchInput.addEventListener('input',filterBookmarks);
 
-        function selectFolder(label, source){
+        function selectFolder(folder, source){
             folders.forEach(f=>f.classList.remove('active'));
             mobileList.forEach(f=>f.classList.remove('active'));
+
+            const label = folder.textContent.trim();
+            const url = folder.dataset.url;
             const all=[...folders,...mobileList];
-            const match=all.find(f=>f.textContent.trim()===label.trim());
-            if(match) match.classList.add('active');
-            pageTitle.textContent=label.trim();
+            const matches=all.filter(f=>f.textContent.trim()===label);
+            matches.forEach(f=>f.classList.add('active'));
+
+            pageTitle.textContent=label;
             searchInput.value='';
             bookmarkCards.forEach(card=>card.style.display='flex');
+
             if(source==='mobile') mobilePanel.classList.remove('open');
+
+            // Buka tujuan folder pada tab baru.
+            if(url){
+                window.open(url, '_blank', 'noopener,noreferrer');
+            }
         }
-        folders.forEach(folder=>folder.addEventListener('click',()=>selectFolder(folder.textContent)));
-        mobileList.forEach(folder=>folder.addEventListener('click',()=>selectFolder(folder.textContent,'mobile')));
+        folders.forEach(folder=>folder.addEventListener('click',()=>selectFolder(folder)));
+        mobileList.forEach(folder=>folder.addEventListener('click',()=>selectFolder(folder,'mobile')));
 
         document.getElementById('folderToggle').addEventListener('click',()=>mobilePanel.classList.add('open'));
         document.getElementById('closeFolder').addEventListener('click',()=>mobilePanel.classList.remove('open'));
