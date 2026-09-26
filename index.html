@@ -14,7 +14,7 @@
     <style>
         :root {
             --bg-color:#F8F9FA; --sidebar-bg:#FFF; --text-main:#202124;
-            --text-muted:#5F6368; --primary-color:#1A73E8; --hover-bg:#F1F3F4;
+            --text-muted:#5F6368; --primary-color:#FFC107; --hover-bg:#F1F3F4;
             --border-color:#DADCE0; --safe-bottom:24px;
         }
         *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif}
@@ -30,6 +30,9 @@
         .folder-list li:hover{background:var(--hover-bg)}
         .folder-list li.active{background:#E8F0FE;color:var(--primary-color)}
         .folder-list li i{color:var(--text-muted);font-size:1.1rem;width:20px;text-align:center}
+        .folder-list li i.fa-folder{color:#FFC107}
+        .folder-list li:hover i.fa-folder{color:#FFB300}
+        .folder-list li.active i.fa-folder{color:#FFC107}
         .folder-list li.active i{color:var(--primary-color)}
         .main-content{flex:1;min-width:0;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg-color)}
         .mobile-topbar{display:none}
@@ -60,7 +63,7 @@
             .mobile-brand{display:flex;align-items:center;gap:9px;min-width:0;color:var(--primary-color)}
             .mobile-brand i{font-size:1.15rem}
             .mobile-brand strong{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-            .folder-toggle{border:0;background:#E8F0FE;color:var(--primary-color);width:40px;height:40px;border-radius:10px;
+            .folder-toggle{border:0;background:#FFF8E1;color:#FFC107;width:40px;height:40px;border-radius:10px;
                 display:grid;place-items:center;font-size:1.05rem;cursor:pointer;flex:0 0 40px}
             .main-header{padding:14px 16px;display:flex;align-items:stretch;flex-direction:column;gap:12px}
             .app-title{font-size:.72rem;margin-bottom:3px}
@@ -81,6 +84,9 @@
             .mobile-menu-close{border:0;background:transparent;font-size:1.25rem;color:var(--text-muted);cursor:pointer}
             .mobile-folder-list{list-style:none}
             .mobile-folder-list li{padding:13px 20px;display:flex;gap:12px;align-items:center;cursor:pointer;font-weight:500}
+            .mobile-folder-list li i.fa-folder{color:#FFC107}
+            .mobile-folder-list li:hover i.fa-folder{color:#FFB300}
+            .mobile-folder-list li.active i.fa-folder{color:#FFC107}
             .mobile-folder-list li.active{background:#E8F0FE;color:var(--primary-color)}
         }
         @media (min-width:769px){.mobile-folder-panel{display:none!important}}
