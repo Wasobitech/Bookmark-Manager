@@ -13,220 +13,123 @@
     
     <style>
         :root {
-            --bg-color: #F8F9FA;
-            --sidebar-bg: #FFFFFF;
-            --text-main: #202124;
-            --text-muted: #5F6368;
-            --primary-color: #1A73E8;
-            --hover-bg: #F1F3F4;
-            --border-color: #DADCE0;
+            --bg-color:#F8F9FA; --sidebar-bg:#FFF; --text-main:#202124;
+            --text-muted:#5F6368; --primary-color:#1A73E8; --hover-bg:#F1F3F4;
+            --border-color:#DADCE0; --safe-bottom:24px;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
+        *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif}
+        html,body{width:100%;min-height:100%;background:var(--bg-color)}
+        body{color:var(--text-main);display:flex;min-height:100dvh;overflow:hidden}
+        .sidebar{width:260px;flex:0 0 260px;background:var(--sidebar-bg);border-right:1px solid var(--border-color);
+            display:flex;flex-direction:column;padding:20px 0;min-height:100dvh;overflow-y:auto}
+        .sidebar-header{padding:0 24px;margin-bottom:24px;display:flex;align-items:center;gap:12px;font-size:1.1rem;color:var(--primary-color)}
+        .sidebar-header strong{line-height:1.25}
+        .folder-list{list-style:none}
+        .folder-list li{padding:12px 24px;display:flex;align-items:center;gap:14px;color:var(--text-main);
+            cursor:pointer;font-weight:500;transition:.2s}
+        .folder-list li:hover{background:var(--hover-bg)}
+        .folder-list li.active{background:#E8F0FE;color:var(--primary-color)}
+        .folder-list li i{color:var(--text-muted);font-size:1.1rem;width:20px;text-align:center}
+        .folder-list li.active i{color:var(--primary-color)}
+        .main-content{flex:1;min-width:0;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg-color)}
+        .mobile-topbar{display:none}
+        .main-header{flex:0 0 auto;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;
+            gap:20px;border-bottom:1px solid var(--border-color);background:var(--sidebar-bg)}
+        .header-title-wrap{min-width:0}
+        .app-title{font-size:.78rem;color:var(--primary-color);font-weight:600;margin-bottom:4px}
+        .main-header h1{font-size:1.4rem;font-weight:600;line-height:1.25}
+        .search-bar{display:flex;align-items:center;background:var(--hover-bg);padding:10px 16px;border-radius:8px;width:300px;max-width:100%}
+        .search-bar i{color:var(--text-muted);margin-right:10px}
+        .search-bar input{border:none;background:transparent;outline:none;width:100%;font-size:.95rem;color:var(--text-main)}
+        .bookmarks-container{padding:28px 32px calc(28px + var(--safe-bottom));overflow-y:auto;overflow-x:hidden;flex:1;min-height:0}
+        .bookmarks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:20px;padding-bottom:12px}
+        .bookmark-card{min-width:0;background:var(--sidebar-bg);border:1px solid var(--border-color);border-radius:12px;padding:16px;
+            display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;transition:.2s;cursor:pointer}
+        .bookmark-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08);transform:translateY(-3px);border-color:var(--primary-color)}
+        .favicon{width:32px;height:32px;flex:0 0 32px;border-radius:6px;object-fit:cover;background:#f0f0f0;padding:4px}
+        .bookmark-info{min-width:0;overflow:hidden}
+        .bookmark-title{font-size:.95rem;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .bookmark-url{font-size:.8rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        @media (max-width:768px){
+            :root{--safe-bottom:36px}
+            body{display:block;overflow:hidden}
+            .sidebar{display:none}
+            .main-content{width:100%;height:100dvh;min-height:100dvh}
+            .mobile-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+                padding:12px 16px;background:#fff;border-bottom:1px solid var(--border-color);flex:0 0 auto}
+            .mobile-brand{display:flex;align-items:center;gap:9px;min-width:0;color:var(--primary-color)}
+            .mobile-brand i{font-size:1.15rem}
+            .mobile-brand strong{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+            .folder-toggle{border:0;background:#E8F0FE;color:var(--primary-color);width:40px;height:40px;border-radius:10px;
+                display:grid;place-items:center;font-size:1.05rem;cursor:pointer;flex:0 0 40px}
+            .main-header{padding:14px 16px;display:flex;align-items:stretch;flex-direction:column;gap:12px}
+            .app-title{font-size:.72rem;margin-bottom:3px}
+            .main-header h1{font-size:1.2rem}
+            .search-bar{width:100%;padding:10px 13px}
+            .bookmarks-container{padding:18px 16px calc(24px + var(--safe-bottom));-webkit-overflow-scrolling:touch}
+            .bookmarks-grid{grid-template-columns:1fr;gap:12px}
+            .bookmark-card{padding:14px;gap:12px}
+            .bookmark-title{font-size:.9rem}
+            .bookmark-url{font-size:.76rem}
+            .mobile-folder-panel{position:fixed;z-index:1000;inset:0;background:rgba(0,0,0,.32);visibility:hidden;opacity:0;transition:.2s}
+            .mobile-folder-panel.open{visibility:visible;opacity:1}
+            .mobile-folder-menu{position:absolute;left:0;top:0;bottom:0;width:min(84vw,310px);background:#fff;padding:18px 0;
+                transform:translateX(-100%);transition:.25s;box-shadow:4px 0 18px rgba(0,0,0,.12)}
+            .mobile-folder-panel.open .mobile-folder-menu{transform:translateX(0)}
+            .mobile-menu-head{display:flex;align-items:center;justify-content:space-between;padding:0 18px 18px;border-bottom:1px solid var(--border-color);margin-bottom:8px}
+            .mobile-menu-head strong{color:var(--primary-color)}
+            .mobile-menu-close{border:0;background:transparent;font-size:1.25rem;color:var(--text-muted);cursor:pointer}
+            .mobile-folder-list{list-style:none}
+            .mobile-folder-list li{padding:13px 20px;display:flex;gap:12px;align-items:center;cursor:pointer;font-weight:500}
+            .mobile-folder-list li.active{background:#E8F0FE;color:var(--primary-color)}
         }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* --- SIDEBAR UI --- */
-        .sidebar {
-            width: 260px;
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            padding: 20px 0;
-        }
-
-        .sidebar-header {
-            padding: 0 24px;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.2rem;
-            color: var(--primary-color);
-        }
-
-        .folder-list {
-            list-style: none;
-        }
-
-        .folder-list li {
-            padding: 12px 24px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            color: var(--text-main);
-            cursor: pointer;
-            font-weight: 500;
-            transition: 0.2s;
-        }
-
-        .folder-list li:hover {
-            background-color: var(--hover-bg);
-        }
-
-        .folder-list li.active {
-            background-color: #E8F0FE;
-            color: var(--primary-color);
-        }
-
-        .folder-list li i {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-        }
-        
-        .folder-list li.active i {
-            color: var(--primary-color);
-        }
-
-        /* --- MAIN CONTENT UI --- */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--bg-color);
-        }
-
-        .main-header {
-            padding: 24px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            background-color: var(--sidebar-bg);
-        }
-
-        .main-header h1 {
-            font-size: 1.4rem;
-            font-weight: 600;
-        }
-
-        .search-bar {
-            display: flex;
-            align-items: center;
-            background-color: var(--hover-bg);
-            padding: 10px 16px;
-            border-radius: 8px;
-            width: 300px;
-        }
-
-        .search-bar i {
-            color: var(--text-muted);
-            margin-right: 10px;
-        }
-
-        .search-bar input {
-            border: none;
-            background: transparent;
-            outline: none;
-            width: 100%;
-            font-size: 0.95rem;
-            color: var(--text-main);
-        }
-
-        /* --- BOOKMARKS GRID --- */
-        .bookmarks-container {
-            padding: 32px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .bookmarks-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        /* INI ADALAH KODE UNTUK SETIAP LINK (DAPAT DIKLIK & AKTIF) */
-        .bookmark-card {
-            background-color: var(--sidebar-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
-        }
-
-        .bookmark-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transform: translateY(-3px);
-            border-color: var(--primary-color);
-        }
-
-        .favicon {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            object-fit: cover;
-            background-color: #f0f0f0;
-            padding: 4px;
-        }
-
-        .bookmark-info {
-            overflow: hidden;
-        }
-
-        .bookmark-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .bookmark-url {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Responsif untuk layar kecil */
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main-header { flex-direction: column; align-items: flex-start; gap: 16px; }
-            .search-bar { width: 100%; }
-        }
+        @media (min-width:769px){.mobile-folder-panel{display:none!important}}
     </style>
 </head>
 <body>
+    <div class="mobile-folder-panel" id="mobileFolderPanel">
+        <div class="mobile-folder-menu" role="dialog" aria-label="Daftar folder">
+            <div class="mobile-menu-head">
+                <strong>Folder Bookmarks</strong>
+                <button class="mobile-menu-close" id="closeFolder" aria-label="Tutup">&times;</button>
+            </div>
+            <ul class="mobile-folder-list" id="mobileFolderList">
+                <li class="active"><i class="fa-solid fa-list"></i> Semua Link</li>
+                <li><i class="fa-solid fa-folder"></i> Pekerjaan</li>
+                <li><i class="fa-solid fa-folder"></i> Referensi &amp; Belajar</li>
+                <li><i class="fa-solid fa-folder"></i> Hiburan</li>
+                <li><i class="fa-solid fa-folder"></i> Media Sosial</li>
+            </ul>
+        </div>
+    </div>
+
 
     <!-- Sidebar Kiri -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <i class="fa-brands fa-chrome"></i>
-            <strong>Bookmarks App</strong>
+            <strong>Bookmarks WasobiTech</strong>
         </div>
         <ul class="folder-list">
             <li class="active" id="folder-all"><i class="fa-solid fa-list"></i> Semua Link</li>
             <li><i class="fa-solid fa-folder"></i> Pekerjaan</li>
             <li><i class="fa-solid fa-folder"></i> Referensi & Belajar</li>
             <li><i class="fa-solid fa-folder"></i> Hiburan</li>
+			<li><i class="fa-solid fa-folder"></i> Media Sosial</li>
         </ul>
     </aside>
 
     <!-- Area Konten Utama -->
     <main class="main-content">
+        <div class="mobile-topbar">
+            <div class="mobile-brand"><i class="fa-brands fa-chrome"></i><strong>Bookmarks WasobiTech</strong></div>
+            <button class="folder-toggle" id="folderToggle" aria-label="Buka folder"><i class="fa-solid fa-folder"></i></button>
+        </div>
         <header class="main-header">
-            <h1 id="page-title">Semua Link</h1>
+            <div class="header-title-wrap">
+                <div class="app-title">APLIKASI BOOKMARKS MANAGER</div>
+                <h1 id="page-title">Semua Link</h1>
+            </div>
             <div class="search-bar">
                 <i class="fa-solid fa-search"></i>
                 <input type="text" id="searchInput" placeholder="Cari dari daftar link...">
@@ -279,7 +182,7 @@
 				
 				<!-- Contoh Link 5 -->
                 <a href="https://gemini.google.com" target="_blank" class="bookmark-card">
-				<img src="https://gemini.google.com/favicon.ico" alt="Gemini Icon" class="favicon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2885/2885417.png'">
+				<img src="https://gemini.google.com/favicon.ico" alt="Icon" class="favicon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2885/2885417.png'">
 				<div class="bookmark-info">
 				<div class="bookmark-title">Gemini AI</div>
 				<div class="bookmark-url">https://gemini.google.com</div>
@@ -288,12 +191,39 @@
 				
 				<!-- Contoh Link 6 -->
                 <a href="https://vercel.com/" target="_blank" class="bookmark-card">
-				<img src="https://vercel.com//favicon.ico" alt="Gemini Icon" class="favicon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2885/2885417.png'">
+				<img src="https://vercel.com/favicon.ico" alt="Icon" class="favicon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2885/2885417.png'">
 				<div class="bookmark-info">
 				<div class="bookmark-title">VercelApp</div>
-				<div class="bookmark-url">https://vercel.com/</div>
+				<div class="bookmark-url">https://vercel.com</div>
 					</div>
 				</a>
+				
+				<!-- Contoh Link 7 -->
+                <a href="https://script.google.com/" target="_blank" class="bookmark-card">
+				<img src="https://script.google.com/favicon.ico" alt="Icon" class="favicon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2885/2885417.png'">
+				<div class="bookmark-info">
+				<div class="bookmark-title">Google App Script</div>
+				<div class="bookmark-url">https://script.google.com</div>
+					</div>
+				</a>
+				
+				<!-- Contoh Link 8 -->
+                <a href="https://data.go.id/" target="_blank" class="bookmark-card">
+                    <img src="https://data.go.id/favicon.ico" alt="Icon" class="favicon">
+                    <div class="bookmark-info">
+                        <div class="bookmark-title">Satu Data</div>
+                        <div class="bookmark-url">https://data.go.id</div>
+                    </div>
+                </a>
+				
+				<!-- Contoh Link 9 -->
+                <a href="https://web-experiences-mu.vercel.app/" target="_blank" class="bookmark-card">
+                    <img src="https://vercel.com/favicon.ico" alt="Icon" class="favicon">
+                    <div class="bookmark-info">
+                        <div class="bookmark-title">Web Experiences</div>
+                        <div class="bookmark-url">https://web-experiences-mu.vercel.app</div>
+                    </div>
+                </a>
 
                 <!-- ==============================================
                      AKHIR DARI DAFTAR LINK
@@ -305,43 +235,40 @@
 
     <!-- Script untuk fitur pencarian (Search) dan interaksi Folder UI -->
     <script>
-        // Fitur Pencarian Bookmark
-        const searchInput = document.getElementById('searchInput');
-        const bookmarkCards = document.querySelectorAll('.bookmark-card');
+        const searchInput=document.getElementById('searchInput');
+        const bookmarkCards=document.querySelectorAll('.bookmark-card');
+        const pageTitle=document.getElementById('page-title');
+        const folders=document.querySelectorAll('.folder-list li');
+        const mobilePanel=document.getElementById('mobileFolderPanel');
+        const mobileList=document.querySelectorAll('.mobile-folder-list li');
 
-        searchInput.addEventListener('input', function(e) {
-            const query = e.target.value.toLowerCase();
-            
-            bookmarkCards.forEach(card => {
-                const title = card.querySelector('.bookmark-title').textContent.toLowerCase();
-                const url = card.querySelector('.bookmark-url').textContent.toLowerCase();
-                
-                if (title.includes(query) || url.includes(query)) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
+        function filterBookmarks(){
+            const query=searchInput.value.toLowerCase().trim();
+            bookmarkCards.forEach(card=>{
+                const title=card.querySelector('.bookmark-title').textContent.toLowerCase();
+                const url=card.querySelector('.bookmark-url').textContent.toLowerCase();
+                card.style.display=(title.includes(query)||url.includes(query))?'flex':'none';
             });
-        });
+        }
+        searchInput.addEventListener('input',filterBookmarks);
 
-        // Fitur Ganti Folder/Kategori (Sebagai simulasi UI)
-        const folders = document.querySelectorAll('.folder-list li');
-        const pageTitle = document.getElementById('page-title');
+        function selectFolder(label, source){
+            folders.forEach(f=>f.classList.remove('active'));
+            mobileList.forEach(f=>f.classList.remove('active'));
+            const all=[...folders,...mobileList];
+            const match=all.find(f=>f.textContent.trim()===label.trim());
+            if(match) match.classList.add('active');
+            pageTitle.textContent=label.trim();
+            searchInput.value='';
+            bookmarkCards.forEach(card=>card.style.display='flex');
+            if(source==='mobile') mobilePanel.classList.remove('open');
+        }
+        folders.forEach(folder=>folder.addEventListener('click',()=>selectFolder(folder.textContent)));
+        mobileList.forEach(folder=>folder.addEventListener('click',()=>selectFolder(folder.textContent,'mobile')));
 
-        folders.forEach(folder => {
-            folder.addEventListener('click', function() {
-                // Hapus state aktif dari semua folder
-                folders.forEach(f => f.classList.remove('active'));
-                // Tambahkan state aktif ke folder yang diklik
-                this.classList.add('active');
-                // Ubah judul halaman
-                pageTitle.textContent = this.innerText;
-                
-                // Hapus teks pencarian jika berpindah folder
-                searchInput.value = '';
-                bookmarkCards.forEach(card => card.style.display = 'flex');
-            });
-        });
+        document.getElementById('folderToggle').addEventListener('click',()=>mobilePanel.classList.add('open'));
+        document.getElementById('closeFolder').addEventListener('click',()=>mobilePanel.classList.remove('open'));
+        mobilePanel.addEventListener('click',e=>{if(e.target===mobilePanel) mobilePanel.classList.remove('open')});
     </script>
 </body>
 </html>
