@@ -5,17 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aplikasi Bookmarks Manager</title>
     
-    <!-- Ikon Font Awesome untuk antarmuka UI -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Ikon Bootstrap untuk antarmuka UI -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <!-- Font Google (Inter) untuk tampilan modern dan bersih -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color:#F8F9FA; --sidebar-bg:#FFF; --text-main:#202124;
-            --text-muted:#5F6368; --primary-color:#FFC107; --hover-bg:#F1F3F4;
-            --border-color:#DADCE0; --safe-bottom:24px;
+            --bg-color: #f8fafc; 
+            --sidebar-bg: #ffffff; 
+            --text-main: #1e293b;
+            --text-muted: #64748b; 
+            --primary-color: #3b82f6; 
+            --primary-light: #eff6ff;
+            --hover-bg: #f1f5f9;
+            --border-color: #e2e8f0; 
+            --safe-bottom: 24px;
         }
         *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif}
         html,body{width:100%;min-height:100%;background:var(--bg-color)}
@@ -24,11 +30,11 @@
             display:flex;flex-direction:column;padding:20px 0;min-height:100dvh;overflow-y:auto}
         .sidebar-header{padding:0 24px;margin-bottom:24px;display:flex;align-items:center;gap:12px;font-size:1.1rem;color:var(--primary-color)}
         .sidebar-header strong{line-height:1.25}
-        .folder-list{list-style:none}
+        .folder-list{list-style:none;overflow-y:auto;flex:1}
         .folder-list li{padding:12px 24px;display:flex;align-items:center;gap:14px;color:var(--text-main);
             cursor:pointer;font-weight:500;transition:.2s}
         .folder-list li:hover{background:var(--hover-bg)}
-        .folder-list li.active{background:#E8F0FE;color:var(--primary-color)}
+        .folder-list li.active{background:var(--primary-light);color:var(--primary-color)}
         .folder-list li i{color:var(--text-muted);font-size:1.1rem;width:20px;text-align:center}
         .folder-list li.active i{color:var(--primary-color)}
         .main-content{flex:1;min-width:0;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg-color)}
@@ -45,11 +51,12 @@
         .bookmarks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:20px;padding-bottom:12px}
         .bookmark-card{min-width:0;background:var(--sidebar-bg);border:1px solid var(--border-color);border-radius:12px;padding:16px;
             display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;transition:.2s;cursor:pointer}
-        .bookmark-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08);transform:translateY(-3px);border-color:var(--primary-color)}
+        .bookmark-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.06);transform:translateY(-3px);border-color:var(--primary-color)}
         .favicon{width:32px;height:32px;flex:0 0 32px;border-radius:6px;object-fit:cover;background:#f0f0f0;padding:4px}
         .bookmark-info{min-width:0;overflow:hidden}
         .bookmark-title{font-size:.95rem;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .bookmark-url{font-size:.8rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        
         @media (max-width:768px){
             :root{--safe-bottom:36px}
             body{display:block;overflow:hidden}
@@ -60,7 +67,7 @@
             .mobile-brand{display:flex;align-items:center;gap:9px;min-width:0;color:var(--primary-color)}
             .mobile-brand i{font-size:1.15rem}
             .mobile-brand strong{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-            .folder-toggle{border:0;background:#E8F0FE;color:var(--primary-color);width:40px;height:40px;border-radius:10px;
+            .folder-toggle{border:0;background:var(--primary-light);color:var(--primary-color);width:40px;height:40px;border-radius:10px;
                 display:grid;place-items:center;font-size:1.05rem;cursor:pointer;flex:0 0 40px}
             .main-header{padding:14px 16px;display:flex;align-items:stretch;flex-direction:column;gap:12px}
             .app-title{font-size:.72rem;margin-bottom:3px}
@@ -71,17 +78,24 @@
             .bookmark-card{padding:14px;gap:12px}
             .bookmark-title{font-size:.9rem}
             .bookmark-url{font-size:.76rem}
+            
             .mobile-folder-panel{position:fixed;z-index:1000;inset:0;background:rgba(0,0,0,.32);visibility:hidden;opacity:0;transition:.2s}
             .mobile-folder-panel.open{visibility:visible;opacity:1}
-            .mobile-folder-menu{position:absolute;left:0;top:0;bottom:0;width:min(84vw,310px);background:#fff;padding:18px 0;
-                transform:translateX(-100%);transition:.25s;box-shadow:4px 0 18px rgba(0,0,0,.12)}
+            
+            /* Perbaikan posisi dinamis & scrollable pada mobile */
+            .mobile-folder-menu{position:absolute;left:0;top:0;bottom:0;width:min(84vw,310px);background:#fff;
+                display:flex;flex-direction:column;transform:translateX(-100%);transition:.25s;box-shadow:4px 0 18px rgba(0,0,0,.12)}
             .mobile-folder-panel.open .mobile-folder-menu{transform:translateX(0)}
-            .mobile-menu-head{display:flex;align-items:center;justify-content:space-between;padding:0 18px 18px;border-bottom:1px solid var(--border-color);margin-bottom:8px}
+            
+            .mobile-menu-head{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border-color)}
             .mobile-menu-head strong{color:var(--primary-color)}
-            .mobile-menu-close{border:0;background:transparent;font-size:1.25rem;color:var(--text-muted);cursor:pointer}
-            .mobile-folder-list{list-style:none}
+            .mobile-menu-close{border:0;background:transparent;font-size:1.2rem;color:var(--text-muted);cursor:pointer}
+            
+            .mobile-folder-list{list-style:none;overflow-y:auto;flex:1;padding:8px 0;-webkit-overflow-scrolling:touch}
             .mobile-folder-list li{padding:13px 20px;display:flex;gap:12px;align-items:center;cursor:pointer;font-weight:500}
-            .mobile-folder-list li.active{background:#E8F0FE;color:var(--primary-color)}
+            .mobile-folder-list li i{color:var(--text-muted);font-size:1.1rem;width:20px;text-align:center}
+            .mobile-folder-list li.active{background:var(--primary-light);color:var(--primary-color)}
+            .mobile-folder-list li.active i{color:var(--primary-color)}
         }
         @media (min-width:769px){.mobile-folder-panel{display:none!important}}
     </style>
@@ -91,57 +105,56 @@
         <div class="mobile-folder-menu" role="dialog" aria-label="Daftar folder">
             <div class="mobile-menu-head">
                 <strong>Folder Bookmarks</strong>
-                <button class="mobile-menu-close" id="closeFolder" aria-label="Tutup">&times;</button>
+                <button class="mobile-menu-close" id="closeFolder" aria-label="Tutup"><i class="bi bi-x-lg"></i></button>
             </div>
             <ul class="mobile-folder-list" id="mobileFolderList">
-            <li class="active" id="folder-all" data-url="https://wasobitech-bookmarks.vercel.app/"><i class="fa-solid fa-list"></i> Semua Link</li>
-            <li data-url="https://www.google.com/search?q=%22ai+tool%22"><i class="fa-solid fa-folder"></i> AI Tool</li>			
-			<li data-url="https://www.google.com/search?q=%22tool+for+developer%22"><i class="fa-solid fa-folder"></i> Tool Developer</li>
-			<li data-url="https://sites.google.com/view/wasobi-tools/"><i class="fa-solid fa-folder"></i> Tool WasobiTech</li>
-			<li data-url="https://www.google.com/search?q=%22pekerjaan%22"><i class="fa-solid fa-folder"></i> Pekerjaan</li>
-            <li data-url="https://www.google.com/search?q=%22referensi+belajar%22"><i class="fa-solid fa-folder"></i> Referensi &amp; Belajar</li>
-            <li data-url="https://www.google.com/search?q=%22hiburan%22"><i class="fa-solid fa-folder"></i> Hiburan</li>
-			<li data-url="https://www.google.com/search?q=%22platform+media+sosial%22"><i class="fa-solid fa-folder"></i> Media Sosial</li>
-			<li data-url="https://websitevice.com/"><i class="fa-solid fa-folder"></i> Template</li>
-			<li data-url="https://data.inaproc.id/profil-pengadaan"><i class="fa-solid fa-folder"></i> INAPROC</li>
-			<li data-url="https://kppip.go.id/"><i class="fa-solid fa-folder"></i> Proyek Strategis Nasional</li>
-			<li data-url="https://www.lkpp.go.id/"><i class="fa-solid fa-folder"></i> LKPP</li>
-			<li data-url="https://eoffice.lkpp.go.id/keaslian"><i class="fa-solid fa-folder"></i> eOffice-LKPP</li>
-			<li data-url="https://dataindonesia.id/"><i class="fa-solid fa-folder"></i> Data Indonesia</li>
+                <li class="active" id="folder-all" data-url="https://wasobitech-bookmarks.vercel.app/"><i class="bi bi-list-task"></i> Semua Link</li>
+                <li data-url="https://www.google.com/search?q=%22ai+tool%22"><i class="bi bi-folder-fill"></i> AI Tool</li>			
+                <li data-url="https://www.google.com/search?q=%22tool+for+developer%22"><i class="bi bi-folder-fill"></i> Tool Developer</li>
+                <li data-url="https://sites.google.com/view/wasobi-tools/"><i class="bi bi-folder-fill"></i> Tool WasobiTech</li>
+                <li data-url="https://www.google.com/search?q=%22pekerjaan%22"><i class="bi bi-folder-fill"></i> Pekerjaan</li>
+                <li data-url="https://www.google.com/search?q=%22referensi+belajar%22"><i class="bi bi-folder-fill"></i> Referensi &amp; Belajar</li>
+                <li data-url="https://www.google.com/search?q=%22hiburan%22"><i class="bi bi-folder-fill"></i> Hiburan</li>
+                <li data-url="https://www.google.com/search?q=%22platform+media+sosial%22"><i class="bi bi-folder-fill"></i> Media Sosial</li>
+                <li data-url="https://websitevice.com/"><i class="bi bi-folder-fill"></i> Template</li>
+                <li data-url="https://data.inaproc.id/profil-pengadaan"><i class="bi bi-folder-fill"></i> INAPROC</li>
+                <li data-url="https://kppip.go.id/"><i class="bi bi-folder-fill"></i> Proyek Strategis Nasional</li>
+                <li data-url="https://www.lkpp.go.id/"><i class="bi bi-folder-fill"></i> LKPP</li>
+                <li data-url="https://eoffice.lkpp.go.id/keaslian"><i class="bi bi-folder-fill"></i> eOffice-LKPP</li>
+                <li data-url="https://dataindonesia.id/"><i class="bi bi-folder-fill"></i> Data Indonesia</li>
             </ul>
         </div>
     </div>
 
-
     <!-- Sidebar Kiri -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <i class="fa-brands fa-chrome"></i>
+            <i class="bi bi-bookmark-fill"></i>
             <strong>Bookmarks WasobiTech</strong>
         </div>
         <ul class="folder-list">
-            <li class="active" id="folder-all" data-url="https://wasobitech-bookmarks.vercel.app/"><i class="fa-solid fa-list"></i> Semua Link</li>
-            <li data-url="https://www.google.com/search?q=%22ai+tool%22"><i class="fa-solid fa-folder"></i> AI Tool</li>			
-			<li data-url="https://www.google.com/search?q=%22tool+for+developer%22"><i class="fa-solid fa-folder"></i> Tool Developer</li>
-			<li data-url="https://sites.google.com/view/wasobi-tools/"><i class="fa-solid fa-folder"></i> Tool WasobiTech</li>
-			<li data-url="https://www.google.com/search?q=%22pekerjaan%22"><i class="fa-solid fa-folder"></i> Pekerjaan</li>
-            <li data-url="https://www.google.com/search?q=%22referensi+belajar%22"><i class="fa-solid fa-folder"></i> Referensi &amp; Belajar</li>
-            <li data-url="https://www.google.com/search?q=%22hiburan%22"><i class="fa-solid fa-folder"></i> Hiburan</li>
-			<li data-url="https://www.google.com/search?q=%22platform+media+sosial%22"><i class="fa-solid fa-folder"></i> Media Sosial</li>
-			<li data-url="https://websitevice.com/"><i class="fa-solid fa-folder"></i> Template</li>
-			<li data-url="https://data.inaproc.id/profil-pengadaan"><i class="fa-solid fa-folder"></i> INAPROC</li>
-			<li data-url="https://kppip.go.id/"><i class="fa-solid fa-folder"></i> Proyek Strategis Nasional</li>
-			<li data-url="https://www.lkpp.go.id/"><i class="fa-solid fa-folder"></i> LKPP</li>
-			<li data-url="https://eoffice.lkpp.go.id/keaslian"><i class="fa-solid fa-folder"></i> eOffice-LKPP</li>
-			<li data-url="https://dataindonesia.id/"><i class="fa-solid fa-folder"></i> Data Indonesia</li>
+            <li class="active" id="folder-all" data-url="https://wasobitech-bookmarks.vercel.app/"><i class="bi bi-list-task"></i> Semua Link</li>
+            <li data-url="https://www.google.com/search?q=%22ai+tool%22"><i class="bi bi-folder-fill"></i> AI Tool</li>			
+            <li data-url="https://www.google.com/search?q=%22tool+for+developer%22"><i class="bi bi-folder-fill"></i> Tool Developer</li>
+            <li data-url="https://sites.google.com/view/wasobi-tools/"><i class="bi bi-folder-fill"></i> Tool WasobiTech</li>
+            <li data-url="https://www.google.com/search?q=%22pekerjaan%22"><i class="bi bi-folder-fill"></i> Pekerjaan</li>
+            <li data-url="https://www.google.com/search?q=%22referensi+belajar%22"><i class="bi bi-folder-fill"></i> Referensi &amp; Belajar</li>
+            <li data-url="https://www.google.com/search?q=%22hiburan%22"><i class="bi bi-folder-fill"></i> Hiburan</li>
+            <li data-url="https://www.google.com/search?q=%22platform+media+sosial%22"><i class="bi bi-folder-fill"></i> Media Sosial</li>
+            <li data-url="https://websitevice.com/"><i class="bi bi-folder-fill"></i> Template</li>
+            <li data-url="https://data.inaproc.id/profil-pengadaan"><i class="bi bi-folder-fill"></i> INAPROC</li>
+            <li data-url="https://kppip.go.id/"><i class="bi bi-folder-fill"></i> Proyek Strategis Nasional</li>
+            <li data-url="https://www.lkpp.go.id/"><i class="bi bi-folder-fill"></i> LKPP</li>
+            <li data-url="https://eoffice.lkpp.go.id/keaslian"><i class="bi bi-folder-fill"></i> eOffice-LKPP</li>
+            <li data-url="https://dataindonesia.id/"><i class="bi bi-folder-fill"></i> Data Indonesia</li>
         </ul>
     </aside>
 
     <!-- Area Konten Utama -->
     <main class="main-content">
         <div class="mobile-topbar">
-            <div class="mobile-brand"><i class="fa-brands fa-chrome"></i><strong>Bookmarks WasobiTech</strong></div>
-            <button class="folder-toggle" id="folderToggle" aria-label="Buka folder"><i class="fa-solid fa-folder"></i></button>
+            <div class="mobile-brand"><i class="bi bi-bookmark-fill"></i><strong>Bookmarks WasobiTech</strong></div>
+            <button class="folder-toggle" id="folderToggle" aria-label="Buka folder"><i class="bi bi-folder2-open"></i></button>
         </div>
         <header class="main-header">
             <div class="header-title-wrap">
@@ -149,18 +162,13 @@
                 <h1 id="page-title">Semua Link</h1>
             </div>
             <div class="search-bar">
-                <i class="fa-solid fa-search"></i>
+                <i class="bi bi-search"></i>
                 <input type="text" id="searchInput" placeholder="Cari dari daftar link...">
             </div>
         </header>
 
         <div class="bookmarks-container">
             <div class="bookmarks-grid" id="bookmarksGrid">
-                
-                <!-- ==============================================
-                     MASUKKAN DAFTAR LINK REFERENSI ANDA DI BAWAH INI
-                     Gunakan tag <a> dengan target="_blank" agar aktif
-                     ============================================== -->
                 
                 <!-- Contoh Link 1 -->
                 <a href="https://www.google.com" target="_blank" class="bookmark-card">
@@ -200,30 +208,30 @@
 				
 				<!-- Contoh Link 5 -->
                 <a href="https://gemini.google.com" target="_blank" class="bookmark-card">
-				<img src="https://gemini.google.com/favicon.ico" alt="Icon" class="favicon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2885/2885417.png'">
-				<div class="bookmark-info">
-				<div class="bookmark-title">Gemini AI</div>
-				<div class="bookmark-url">https://gemini.google.com</div>
-					</div>
-				</a>
+                    <img src="https://gemini.google.com/favicon.ico" alt="Icon" class="favicon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2885/2885417.png'">
+                    <div class="bookmark-info">
+                        <div class="bookmark-title">Gemini AI</div>
+                        <div class="bookmark-url">https://gemini.google.com</div>
+                    </div>
+                </a>
 				
 				<!-- Contoh Link 6 -->
                 <a href="https://vercel.com/" target="_blank" class="bookmark-card">
-				<img src="https://vercel.com/favicon.ico" alt="Icon" class="favicon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2885/2885417.png'">
-				<div class="bookmark-info">
-				<div class="bookmark-title">VercelApp</div>
-				<div class="bookmark-url">https://vercel.com</div>
-					</div>
-				</a>
+                    <img src="https://vercel.com/favicon.ico" alt="Icon" class="favicon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2885/2885417.png'">
+                    <div class="bookmark-info">
+                        <div class="bookmark-title">VercelApp</div>
+                        <div class="bookmark-url">https://vercel.com</div>
+                    </div>
+                </a>
 				
 				<!-- Contoh Link 7 -->
                 <a href="https://script.google.com/" target="_blank" class="bookmark-card">
-				<img src="https://script.google.com/favicon.ico" alt="Icon" class="favicon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2885/2885417.png'">
-				<div class="bookmark-info">
-				<div class="bookmark-title">Google App Script</div>
-				<div class="bookmark-url">https://script.google.com</div>
-					</div>
-				</a>
+                    <img src="https://script.google.com/favicon.ico" alt="Icon" class="favicon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2885/2885417.png'">
+                    <div class="bookmark-info">
+                        <div class="bookmark-title">Google App Script</div>
+                        <div class="bookmark-url">https://script.google.com</div>
+                    </div>
+                </a>
 				
 				<!-- Contoh Link 8 -->
                 <a href="https://data.go.id/" target="_blank" class="bookmark-card">
@@ -251,10 +259,6 @@
                         <div class="bookmark-url">https://codepen.io</div>
                     </div>
                 </a>
-
-                <!-- ==============================================
-                     AKHIR DARI DAFTAR LINK
-                     ============================================== -->
 
             </div>
         </div>
@@ -295,7 +299,6 @@
 
             if(source==='mobile') mobilePanel.classList.remove('open');
 
-            // Buka tujuan folder pada tab baru.
             if(url){
                 window.open(url, '_blank', 'noopener,noreferrer');
             }
